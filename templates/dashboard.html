@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PayDrive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        #notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div id="notification-toast"></div>
+    <nav class="bg-white shadow-md p-4 fixed top-0 left-0 right-0 z-10">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <button id="hamburger-menu" class="text-gray-700 focus:outline-none md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+                <h1 class="text-2xl font-bold text-blue-500">PayDrive</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-gray-700 hover:text-blue-500 hidden md:inline">Home</a>
+                <select id="page-toggle" class="px-3 py-1 border rounded-lg text-gray-700 focus:outline-none">
+                    <option value="offer">Ride Offer</option>
+                    <option value="request">Ride Request</option>
+                </select>
+                <a href="/logout" class="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600">Logout</a>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md p-4">
+            <a href="/profile" class="block text-gray-700 hover:text-blue-500 py-2">Profile</a>
+            <a href="/match" class="block text-gray-700 hover:text-blue-500 py-2">My Requests</a>
+            <a href="/history" class="block text-gray-700 hover:text-blue-500 py-2">Ride History</a>
+            <a href="/payment" class="block text-gray-700 hover:text-blue-500 py-2">Payment Methods</a>
+            <a href="/help" class="block text-gray-700 hover:text-blue-500 py-2">Help & Support</a>
+            <a href="/settings" class="block text-gray-700 hover:text-blue-500 py-2">Settings</a>
+            <a href="/logout" class="block text-red-500 hover:text-red-600 py-2">Logout</a>
+        </div>
+    </nav>
+    <div class="min-h-screen p-4 pt-20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold mb-4">Welcome, {{ username }}!</h2>
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="text-green-500 mb-4">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Confirmed Rides as Rider -->
+            <h3 class="text-xl font-semibold mb-2">Confirmed Rides (As Rider)</h3>
+            {% if confirmed_rides_as_rider %}
+                <div class="bg-white p-4 rounded-lg shadow-lg mb-4">
+                    {% for request in confirmed_rides_as_rider %}
+                        <div class="mb-4 border-b pb-2">
+                            <p><strong>Location:</strong> {{ request.location }}</p>
+                            <p><strong>Arrival Time:</strong> {{ request.arrival_time }}</p>
+                            <p><strong>Phone:</strong> {{ request.phone }}</p>
+                            {% set offer = RideOffer.query.get(request.accepted_offer_id) %}
+                            {% set offerer_profile = Profile.query.filter_by(user_id=offer.user_id).first() %}
+                            <p><strong>Offerer:</strong> {{ offerer_profile.name if offerer_profile else 'N/A' }}</p>
+                            <p><strong>Bike Details:</strong> {{ offer.bike_color if offer else 'N/A' }} - {{ offer.bike_number if offer else 'N/A' }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 mb-4">No confirmed rides as a rider.</p>
+            {% endif %}
+
+            <!-- Confirmed Rides as Offerer -->
+            <h3 class="text-xl font-semibold mb-2">Confirmed Rides (As Offerer)</h3>
+            {% if confirmed_rides_as_offerer %}
+                <div class="bg-white p-4 rounded-lg shadow-lg mb-4">
+                    {% for offer in confirmed_rides_as_offerer %}
+                        <div class="mb-4 border-b pb-2">
+                            <p><strong>Location:</strong> {{ offer.location }}</p>
+                            <p><strong>Arrival Time:</strong> {{ offer.arrival_time }}</p>
+                            <p><strong>Bike Details:</strong> {{ offer.bike_color }} - {{ offer.bike_number }}</p>
+                            {% set request = RideRequest.query.get(offer.accepted_request_id) %}
+                            <p><strong>Rider:</strong> {{ request.rider_name if request else 'N/A' }}</p>
+                            <p><strong>Rider Contact:</strong> {{ request.phone if request else 'N/A' }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 mb-4">No confirmed rides as an offerer.</p>
+            {% endif %}
+
+            <!-- Recent Ride Requests -->
+            <h3 class="text-xl font-semibold mb-2">Recent Ride Requests</h3>
+            {% if recent_requests %}
+                <div class="bg-white p-4 rounded-lg shadow-lg mb-4">
+                    {% for request in recent_requests %}
+                        <div class="mb-4 border-b pb-2">
+                            <p><strong>Location:</strong> {{ request.location }}</p>
+                            <p><strong>Arrival Time:</strong> {{ request.arrival_time }}</p>
+                            <p><strong>Status:</strong> {{ request.status }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 mb-4">No recent ride requests.</p>
+            {% endif %}
+
+            <!-- Recent Ride Offers -->
+            <h3 class="text-xl font-semibold mb-2">Recent Ride Offers</h3>
+            {% if recent_offers %}
+                <div class="bg-white p-4 rounded-lg shadow-lg mb-4">
+                    {% for offer in recent_offers %}
+                        <div class="mb-4 border-b pb-2">
+                            <p><strong>Location:</strong> {{ offer.location }}</p>
+                            <p><strong>Arrival Time:</strong> {{ offer.arrival_time }}</p>
+                            <p><strong>Status:</strong> {{ offer.status }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 mb-4">No recent ride offers.</p>
+            {% endif %}
+
+            <!-- Pending Requests (Offerer View) -->
+            <h3 class="text-xl font-semibold mb-2">Pending Accepted Requests (Offerer)</h3>
+            {% if pending_requests %}
+                <div class="bg-white p-4 rounded-lg shadow-lg mb-4">
+                    {% for request in pending_requests %}
+                        <div class="mb-4 border-b pb-2">
+                            <p><strong>Rider Name:</strong> {{ request.rider_name }}</p>
+                            <p><strong>Location:</strong> {{ request.location }}</p>
+                            <p><strong>Arrival Time:</strong> {{ request.arrival_time }}</p>
+                            <p><strong>Status:</strong> {{ request.status }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 mb-4">No pending accepted requests.</p>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        document.getElementById('hamburger-menu').addEventListener('click', () => {
+            console.log('Hamburger menu clicked');
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        document.getElementById('page-toggle').addEventListener('change', (e) => {
+            console.log('Page toggle changed to:', e.target.value);
+            const value = e.target.value;
+            if (value === 'offer' || value === 'request') {
+                window.location.href = "{{ url_for('choose_ride') }}";
+            }
+        });
+
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket');
+        });
+
+        socket.on('notification', (data) => {
+            const toast = document.getElementById('notification-toast');
+            toast.textContent = data.message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 5000);
+        });
+
+        socket.on('ride_confirmed', (data) => {
+            const toast = document.getElementById('notification-toast');
+            toast.textContent = data.message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

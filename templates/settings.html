@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Ride Sharing App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md p-4 fixed top-0 left-0 right-0 z-10">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <button id="hamburger-menu" class="text-gray-700 focus:outline-none md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+                <h1 class="text-2xl font-bold text-blue-500">PayDrive</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-gray-700 hover:text-blue-500 hidden md:inline">Home</a>
+                <select id="page-toggle" class="px-3 py-1 border rounded-lg text-gray-700 focus:outline-none">
+                    <option value="offer">Ride Offer</option>
+                    <option value="request">Ride Request</option>
+                </select>
+                <a href="/logout" class="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600">Logout</a>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md p-4">
+            <a href="/profile" class="block text-gray-700 hover:text-blue-500 py-2">Profile</a>
+            <a href="/match" class="block text-gray-727
+            hover:text-blue-500 py-2">My Requests</a>
+            <a href="/history" class="block text-gray-700 hover:text-blue-500 py-2">Ride History</a>
+            <a href="/payment" class="block text-gray-700 hover:text-blue-500 py-2">Payment Methods</a>
+            <a href="/help" class="block text-gray-700 hover:text-blue-500 py-2">Help & Support</a>
+            <a href="/settings" class="block text-gray-700 hover:text-blue-500 py-2">Settings</a>
+            <a href="/logout" class="block text-red-500 hover:text-red-600 py-2">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen p-4 pt-20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold mb-4">Settings</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <p class="text-gray-500">Manage your account settings here.</p>
+                <!-- Placeholder for settings content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // Toggle mobile menu
+        document.getElementById('hamburger-menu').addEventListener('click', () => {
+            console.log('Hamburger menu clicked');
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Page toggle navigation
+        document.getElementById('page-toggle').addEventListener('change', (e) => {
+            console.log('Page toggle changed to:', e.target.value);
+            const value = e.target.value;
+            if (value === 'offer' || value === 'request') {
+                window.location.href = "{{ url_for('choose_ride') }}";
+            }
+        });
+    </script>

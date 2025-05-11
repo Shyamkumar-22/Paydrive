@@ -1,0 +1,198 @@
+/* Reset & base */
+body {
+  font-family: 'Poppins', 'Roboto', sans-serif; /* Poppins for app-like feel, Roboto fallback */
+  background: linear-gradient(135deg, #F5F7FA 0%, #FFFFFF 100%); /* Soft white gradient */
+  color: #1E2A44; /* Deep slate text */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  line-height: 1.7;
+  font-weight: 400; /* Regular weight for body */
+}
+
+/* Container for centered content */
+.container {
+  max-width: 36rem;
+  margin: auto;
+  padding: 2.5rem;
+  background: #FFFFFF;
+  border-radius: 1.2rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-family: 'Poppins', 'Roboto', sans-serif; /* Consistent font */
+  font-weight: 800; /* Extra bold for headings */
+  color: #1E2A44;
+}
+
+h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1.6rem;
+  background: linear-gradient(to right, #0066FF, #3399FF); /* Electric blue gradient */
+  -webkit-background-clip: text;
+  background-clip: text; /* Fixes vendorPrefix warning */
+  -webkit-text-fill-color: transparent;
+}
+
+h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1.3rem;
+}
+
+/* Form Elements */
+input, select, textarea {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  border: 2px solid #E5E7EB;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1.2rem;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 400;
+  box-sizing: border-box;
+  background: #F9FAFB;
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #0066FF;
+  box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.2);
+  background: #FFFFFF;
+}
+
+/* Buttons */
+button {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  background: linear-gradient(45deg, #0066FF, #3399FF); /* Electric blue gradient */
+  color: #FFFFFF;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 0.8rem;
+  font-weight: 600; /* Semi-bold for buttons */
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+button:hover {
+  background: linear-gradient(45deg, #004ECC, #1A80FF);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Ride Cards */
+.ride-card {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  background: #FFFFFF;
+  border-radius: 1.2rem;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-left: 4px solid #00CC66; /* Lime green accent */
+}
+
+.ride-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18);
+}
+
+/* Error Messages */
+.error-message {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  color: #FF6B6B; /* Soft coral */
+  font-size: 0.95rem;
+  font-weight: 400;
+  margin-top: 0.8rem;
+  background: #FFF1F2;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+}
+
+/* Form Grid Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.8rem;
+  margin-bottom: 1.6rem;
+}
+
+/* Page Padding */
+#auth-section, #main-section {
+  padding: 1.8rem;
+}
+
+/* Role Selection Buttons */
+#ride-offer, #ride-request {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  background: #00CC66; /* Lime green */
+  color: #1E2A44;
+  padding: 0.9rem 2rem;
+  font-size: 1.3rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+#ride-offer:hover, #ride-request:hover {
+  background: #00A652; /* Darker green */
+  transform: translateY(-3px);
+}
+
+/* Logout Button */
+#logout {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  background: #FF6B6B; /* Soft coral */
+}
+
+#logout:hover {
+  background: #F44336; /* Darker coral */
+  transform: translateY(-3px);
+}
+
+/* Back Button */
+#back-to-choose {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  background: linear-gradient(45deg, #6B7280, #9CA3AF); /* Neutral gray gradient */
+  color: #FFFFFF;
+}
+
+#back-to-choose:hover {
+  background: linear-gradient(45deg, #4B5563, #718096);
+  transform: translateY(-3px);
+}
+
+/* Ride List */
+#ride-list {
+  margin-top: 2.5rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 1.8rem;
+    margin: 0.8rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.9rem;
+  }
+
+  h2 {
+    font-size: 1.9rem;
+  }
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #3E54D1;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayDrive - Splash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .fade-out {
+            opacity: 1;
+            animation: fadeOut 1s ease-in-out forwards;
+            animation-delay: 1.8s;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; transform: scale(0.96); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen" style="background-color: #415de9;">
+    <div class="text-center">
+        <img src="{{ url_for('static', filename='images/paydrive_logo.png') }}" 
+             alt="PayDrive Logo" 
+             class="max-w-[200px] w-full fade-out">
+    </div>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = "{{ redirect_url }}";
+        }, 2500);
+    </script>
+</body>
+</html>
